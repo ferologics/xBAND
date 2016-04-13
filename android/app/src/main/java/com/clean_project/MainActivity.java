@@ -1,5 +1,9 @@
 package com.clean_project;
 
+import android.content.Intent;
+import android.os.Bundle;
+
+import com.clean_project.usbclient.SerialActivity;
 import com.facebook.react.ReactActivity;
 import com.facebook.react.ReactPackage;
 import com.facebook.react.shell.MainReactPackage;
@@ -41,5 +45,17 @@ public class MainActivity extends ReactActivity {
             new MainReactPackage(),
             new ExtraDimensionsPackage(this)  // <--- add here
         );
+    }
+
+//    @Override
+//    public void onCreate(Bundle savedInstanceState) {
+//        super.onCreate(savedInstanceState);
+//
+//        trySerial();
+//    }
+
+    private void trySerial() {
+        Intent intent = new Intent(this, SerialActivity.class);
+        startActivityForResult(intent, 0);
     }
 }
