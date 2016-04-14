@@ -9,6 +9,7 @@ var {
   View,
   Text,
   Navigator,
+  DeviceEventEmitter,
 } = React;
 
 var GiftedMessenger = require('react-native-gifted-messenger');
@@ -23,6 +24,13 @@ if (Platform.OS === 'android') {
 
 var Messenger = React.createClass({
   
+	componentWillMount() {
+		DeviceEventEmitter.addListener('message', function(e: Event) {
+			console.log(e);
+			// this.handleSend(e.params("test"));
+		});
+	},
+
   getMessages() {
     return [
       {text: 'Are you building a chat app?', name: 'React-Native', image: {uri: 'https://facebook.github.io/react/img/logo_og.png'}, position: 'left', date: new Date(2015, 10, 16, 19, 0)},

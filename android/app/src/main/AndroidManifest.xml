@@ -13,6 +13,7 @@
         android:name="com.clean_project.MainActivity"
         android:label="@string/app_name"
         android:configChanges="keyboard|keyboardHidden|orientation|screenSize">
+
         <intent-filter>
             <action android:name="android.intent.action.MAIN" />
             <category android:name="android.intent.category.LAUNCHER" />
@@ -21,17 +22,18 @@
 
       <activity android:name="com.facebook.react.devsupport.DevSettingsActivity" />
 
-      <activity android:name="com.clean_project.usbclient.SerialActivity"
-          android:label="Serial"
-          android:windowSoftInputMode="adjustResize|stateVisible"
-          >
-      </activity>
+      <!--<activity-->
+          <!--android:name="com.clean_project.usbclient.SerialActivity"-->
+          <!--android:label="Serial"-->
+          <!--android:windowSoftInputMode="adjustResize|stateVisible">-->
+      <!--</activity>-->
 
 
       <service
         android:name="com.clean_project.usbclient.UsbService"
         android:enabled="true">
       </service>
+
     </application>
 
 </manifest>

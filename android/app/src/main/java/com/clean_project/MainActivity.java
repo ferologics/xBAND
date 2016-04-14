@@ -14,9 +14,12 @@ import android.util.Log;
 import android.widget.Toast;
 
 //import com.clean_project.usbclient.SerialActivity;
+import com.clean_project.usbclient.MyHandler;
 import com.clean_project.usbclient.UsbService;
 import com.facebook.react.ReactActivity;
+import com.facebook.react.ReactInstanceManager;
 import com.facebook.react.ReactPackage;
+import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.shell.MainReactPackage;
 
 import java.lang.ref.WeakReference;
@@ -27,8 +30,34 @@ import java.util.Set;
 // ExtraDimensions node module for calculation of android screen size
 import ca.jaysoo.extradimensions.ExtraDimensionsPackage;  // <--- import
 
-
 public class MainActivity extends ReactActivity {
+
+    private static ReactInstanceManager sReactInstanceManager = null;
+
+    @Override
+    protected ReactInstanceManager createReactInstanceManager() {
+        ReactInstanceManager manager = super.createReactInstanceManager();
+        sReactInstanceManager = manager;
+        return manager;
+    }
+
+    public static ReactContext getContext() {
+
+        if (sReactInstanceManager == null) {
+            // This doesn't seem to happen ...
+
+//            throw new IllegalStateException("Instance manager not available");
+        }
+
+        final ReactContext context = sReactInstanceManager.getCurrentReactContext();
+
+        if (context == null) {
+            // This only happens on startup once triggered by serial
+//            throw new IllegalStateException("React context not available");
+        }
+
+        return context;
+    }
 
     /**
      * Returns the name of the main component registered from JavaScript.
@@ -96,9 +125,8 @@ public class MainActivity extends ReactActivity {
     };
 
     private UsbService usbService;
-    //private TextView display;
-    //private EditText editText;
     private MyHandler mHandler;
+
     private final ServiceConnection usbConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName arg0, IBinder arg1) {
@@ -149,6 +177,7 @@ public class MainActivity extends ReactActivity {
             }
             startService(startService);
         }
+
         Intent bindingIntent = new Intent(this, service);
         bindService(bindingIntent, serviceConnection, Context.BIND_AUTO_CREATE);
     }
@@ -166,21 +195,4 @@ public class MainActivity extends ReactActivity {
     /*
      * This handler will be passed to UsbService. Data received from serial port is displayed through this handler
      */
-    private static class MyHandler extends Handler {
-        private final WeakReference<MainActivity> mActivity;
-
-        public MyHandler(MainActivity activity) {
-            mActivity = new WeakReference<>(activity);
-        }
-
-        @Override
-        public void handleMessage(Message msg) {
-            switch (msg.what) {
-                case UsbService.MESSAGE_FROM_SERIAL_PORT:
-                    String data = (String) msg.obj;
-                    Log.d(mActivity.getClass().getSimpleName(),data);
-                    break;
-            }
-        }
-    }
 }
