@@ -7,9 +7,7 @@ import android.util.Log;
 
 import com.clean_project.MainActivity;
 import com.facebook.react.bridge.Arguments;
-import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContext;
-import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
 
@@ -20,17 +18,17 @@ public class MyHandler extends Handler {
 
     private final WeakReference<MainActivity> mActivity;
     private ReactContext someContext;
+    private String buffer = "";
 
     public MyHandler(MainActivity activity) {
-        mActivity = new WeakReference<>(activity);
-        someContext = mActivity.get().getContext();
+        mActivity = new WeakReference<MainActivity>(activity);
+        someContext = activity.getContext();
     }
 
-    private void sendEvent(ReactContext reactContext,
-                           String eventName,
+    private void sendEvent(String eventName,
                            @Nullable WritableMap params)
     {
-        reactContext
+        mActivity.get().getContext()
                 .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
                 .emit(eventName, params);
     }
@@ -42,13 +40,16 @@ public class MyHandler extends Handler {
             case UsbService.MESSAGE_FROM_SERIAL_PORT:
 
                 String data = (String) msg.obj;
-                Log.d(mActivity.getClass().getSimpleName(),data);
 
                 // some of this might crash the app because the context is null
-                WritableMap params = Arguments.createMap();
-                params.putString("test", data);
-
-                sendEvent(someContext, "message", params);
+                buffer += data;
+                if( data.contains("\n") && buffer.length() > 1) {
+                    WritableMap params = Arguments.createMap();
+                    Log.d(mActivity.get().getClass().getSimpleName(),buffer);
+                    params.putString("content", buffer);
+                    sendEvent("message", params);
+                    buffer = "";
+                }
 
                 break;
         }

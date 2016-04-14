@@ -33,6 +33,7 @@ import ca.jaysoo.extradimensions.ExtraDimensionsPackage;  // <--- import
 public class MainActivity extends ReactActivity {
 
     private static ReactInstanceManager sReactInstanceManager = null;
+    private ReactContext sReactContext = null;
 
     @Override
     protected ReactInstanceManager createReactInstanceManager() {
@@ -41,15 +42,16 @@ public class MainActivity extends ReactActivity {
         return manager;
     }
 
-    public static ReactContext getContext() {
+    public ReactContext getContext() {
 
         if (sReactInstanceManager == null) {
             // This doesn't seem to happen ...
 
-//            throw new IllegalStateException("Instance manager not available");
+            throw new IllegalStateException("Instance manager not available");
         }
 
-        final ReactContext context = sReactInstanceManager.getCurrentReactContext();
+        sReactContext = sReactInstanceManager.getCurrentReactContext();
+        final ReactContext context = sReactContext;
 
         if (context == null) {
             // This only happens on startup once triggered by serial
