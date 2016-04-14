@@ -7,14 +7,12 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.IBinder;
-import android.os.Message;
-import android.util.Log;
 import android.widget.Toast;
 
 //import com.clean_project.usbclient.SerialActivity;
 import com.clean_project.usbclient.MyHandler;
+import com.clean_project.usbclient.SendModulePackage;
 import com.clean_project.usbclient.UsbService;
 import com.facebook.react.ReactActivity;
 import com.facebook.react.ReactInstanceManager;
@@ -22,7 +20,6 @@ import com.facebook.react.ReactPackage;
 import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.shell.MainReactPackage;
 
-import java.lang.ref.WeakReference;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
@@ -87,7 +84,8 @@ public class MainActivity extends ReactActivity {
     protected List<ReactPackage> getPackages() {
         return Arrays.<ReactPackage>asList(
             new MainReactPackage(),
-            new ExtraDimensionsPackage(this)  // <--- add here
+            new ExtraDimensionsPackage(this),  // <--- add here
+            new SendModulePackage()
         );
     }
 

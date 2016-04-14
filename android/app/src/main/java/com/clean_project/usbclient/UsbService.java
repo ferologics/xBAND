@@ -45,7 +45,7 @@ public class UsbService extends Service {
     private UsbManager usbManager;
     private UsbDevice device;
     private UsbDeviceConnection connection;
-    private UsbSerialDevice serialPort;
+    private static UsbSerialDevice serialPort;
 
     private boolean serialPortConnected;
     /*
@@ -136,7 +136,7 @@ public class UsbService extends Service {
     /*
      * This function will be called from MainActivity to write data through Serial Port
      */
-    public void write(byte[] data) {
+    public static void write(byte[] data) {
         if (serialPort != null)
             serialPort.write(data);
     }

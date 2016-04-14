@@ -1,5 +1,7 @@
 'use strict';
 
+import SendModuleAndroid from './SendModuleAndroid';
+
 var React = require('react-native');
 var {
   LinkingIOS,
@@ -27,9 +29,13 @@ var Messenger = React.createClass({
 	componentWillMount() {
     var messenger = this;
 		DeviceEventEmitter.addListener('message', function(e: Event) {
-      var content = e['content'];
-      // get contents handleReceive
-      messenger.handleReceive({text: content, name: 'React-Native', image: {uri: 'https://facebook.github.io/react/img/logo_og.png'}, position: 'left', date: new Date()});
+			var content = e['content'];
+			messenger.handleReceive({
+									 text: content,
+									 name: 'React-Native',
+									 image: {uri: 'https://facebook.github.io/react/img/logo_og.png'},
+									 position: 'left', date: new Date()
+									});
 		});
 	},
 
@@ -50,6 +56,9 @@ var Messenger = React.createClass({
   handleSend(message = {}, rowID = null) {
     // Your logic here
     // Send message.text to your server
+	  //
+
+	  SendModuleAndroid.send(message.text);
 
     // this._GiftedMessenger.setMessageStatus('Sent', rowID);
     // this._GiftedMessenger.setMessageStatus('Seen', rowID);
