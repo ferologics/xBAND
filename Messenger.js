@@ -30,14 +30,26 @@ var Messenger = React.createClass({
     var messenger = this;
 		DeviceEventEmitter.addListener('message', function(e: Event) {
 			var content = e['content'];
-			messenger.handleReceive({
-									 text: content,
-									 name: 'React-Native',
-									 image: {uri: 'https://facebook.github.io/react/img/logo_og.png'},
-									 position: 'left', date: new Date()
-									});
+			messenger.handleSerial(content);
 		});
 	},
+
+  handleSerial(data) {
+    var bytes = [];
+
+    for (var i = 0; i < 2; ++i) {
+        bytes.push(data.charCodeAt(i));
+    }
+
+    var dest = bytes[0];
+    var from = bytes[1];
+    this.handleReceive({
+                 text: data.slice(2),
+                 name: 'React-Native',
+                 image: {uri: 'https://facebook.github.io/react/img/logo_og.png'},
+                 position: 'left', date: new Date()
+                });
+  },
 
   getMessages() {
     return [
@@ -57,8 +69,8 @@ var Messenger = React.createClass({
     // Your logic here
     // Send message.text to your server
 	  //
-
-	  SendModuleAndroid.send(message.text);
+    alert(message.name)
+	  SendModuleAndroid.send("{12"+message.text+"}");
 
     // this._GiftedMessenger.setMessageStatus('Sent', rowID);
     // this._GiftedMessenger.setMessageStatus('Seen', rowID);
