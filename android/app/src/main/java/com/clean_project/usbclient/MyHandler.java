@@ -12,13 +12,14 @@ import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
 
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
 
 
 public class MyHandler extends Handler {
 
     private final WeakReference<MainActivity> mActivity;
     private ReactContext someContext;
-    private String buffer = "";
+    private char[] buffer = new char[64];
 
     public MyHandler(MainActivity activity) {
         mActivity = new WeakReference<MainActivity>(activity);
@@ -33,6 +34,18 @@ public class MyHandler extends Handler {
                 .emit(eventName, params);
     }
 
+    private final char CLEAR = 0;
+    private final char STARTED = 1;
+    private final char SYNC_CHARACTER = '{';
+    private final char TERMINATOR_CHARACTER = '}';
+    private final int INPUT_LENGTH = 50;
+
+    private char incomingByte;   // for incoming serial data
+    private char reliableLength;
+    private char commandIndex = 0;
+    private char commandState = CLEAR;
+    private char[] commandBuffer = new char[INPUT_LENGTH + 2];
+
     @Override
     public void handleMessage(Message msg) {
 
@@ -41,15 +54,39 @@ public class MyHandler extends Handler {
 
                 String data = (String) msg.obj;
 
-                // some of this might crash the app because the context is null
-                buffer += data;
-                if( data.contains("\n") && buffer.length() > 1) {
-                    WritableMap params = Arguments.createMap();
-                    Log.d(mActivity.get().getClass().getSimpleName(),buffer);
-                    params.putString("content", buffer);
-                    sendEvent("message", params);
-                    buffer = "";
+                for (char incomingByte:data.toCharArray()) {
+                    if (CLEAR == commandState){
+                        if (SYNC_CHARACTER == incomingByte) {
+                            commandState = STARTED;
+                        }
+                    }
+
+                    if (STARTED == commandState) {
+                        if (TERMINATOR_CHARACTER == incomingByte) {
+                            commandBuffer[commandIndex] = 0;
+                            WritableMap params = Arguments.createMap();
+                            params.putString("content", new String(commandBuffer));
+                            sendEvent("message", params);
+
+                            commandIndex = 0;
+                            commandState = CLEAR;
+                        } else {
+                            commandBuffer[commandIndex] = incomingByte;
+                            commandIndex ++;
+                            if (INPUT_LENGTH< commandIndex) {
+                                WritableMap params = Arguments.createMap();
+                                params.putString("content", "{too much data}");
+                                sendEvent("message", params);
+
+                                commandIndex = 0;
+                                commandState = CLEAR;
+                                return;
+                            }
+                        }
+                    }
                 }
+                // some of this might crash the app because the context is null
+
 
                 break;
         }
