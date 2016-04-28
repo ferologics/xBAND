@@ -1,6 +1,8 @@
 'use strict';
 
 import SendModuleAndroid from './SendModuleAndroid';
+import Module from './test';
+import _ from 'lodash';
 
 var React = require('react-native');
 var {
@@ -32,36 +34,33 @@ var Messenger = React.createClass({
 			var content = e['content'];
 			messenger.handleSerial(content);
 		});
+
+    this.setState({
+      uniqueId: _.uniqueId()
+    })
 	},
 
   handleSerial(data) {
-    var bytes = [];
+    // var bytes = [];
+    //
+    // for (var i = 0; i < 2; ++i) {
+    //     bytes.push(data.charCodeAt(i));
+    // }
+    //
+    // var dest = bytes[0];
+    // var from = bytes[1];
 
-    for (var i = 0; i < 2; ++i) {
-        bytes.push(data.charCodeAt(i));
-    }
-
-    var dest = bytes[0];
-    var from = bytes[1];
     this.handleReceive({
-                 text: data.slice(2),
-                 name: 'React-Native',
-                 image: {uri: 'https://facebook.github.io/react/img/logo_og.png'},
+                 text: data.slice(1)/*.replace(/[^A-Za-z0-9]/g, '')*/,
+                 name: 'Anonymous' + this.state.uniqueId,
+                 image: {uri: 'http://i.imgur.com/ut1lOix.png'},
                  position: 'left', date: new Date()
                 });
   },
 
   getMessages() {
     return [
-      {text: 'Are you building a chat app?', name: 'React-Native', image: {uri: 'https://facebook.github.io/react/img/logo_og.png'}, position: 'left', date: new Date(2015, 10, 16, 19, 0)},
-      {
-        text: "Yes, and I use Gifted Messenger!",
-        name: 'Developer',
-        image: null,
-        position: 'right',
-        date: new Date(2015, 10, 17, 19, 0)
-        // If needed, you can add others data (eg: userId, messageId)
-      },
+      {text: 'Welcome to xBAND global chat', name: 'Bot', image: {uri: 'http://i.imgur.com/ut1lOix.png'}, position: 'left', date: new Date(2015, 10, 16, 19, 0)},
     ];
   },
 
@@ -69,14 +68,15 @@ var Messenger = React.createClass({
     // Your logic here
     // Send message.text to your server
 	  //
-    alert(message.name)
-	  SendModuleAndroid.send("{12"+message.text+"}");
+    // console.warn(message.name)
+	  SendModuleAndroid.send("{"+message.text+"}");
+    // libtest.test();
 
     // this._GiftedMessenger.setMessageStatus('Sent', rowID);
     // this._GiftedMessenger.setMessageStatus('Seen', rowID);
     // this._GiftedMessenger.setMessageStatus('Custom label status', rowID);
     if (this.isMounted()) {
-      this._GiftedMessenger.setMessageStatus('ErrorButton', rowID); // => In this case, you need also to set onErrorButtonPress
+      this._GiftedMessenger.setMessageStatus('Sent', rowID); // => In this case, you need also to set onErrorButtonPress
     }
   },
 
@@ -89,17 +89,17 @@ var Messenger = React.createClass({
     // newest messages have to be at the begining of the array
     var earlierMessages = [
       {
-        text: 'This is a touchable phone number 0606060606 parsed by taskrabbit/react-native-parsed-text',
-        name: 'Developer',
-        image: null,
-        position: 'right',
+        text: 'Project xBand to the Moon!',
+        name: 'Project xBand Team',
+        image: {uri: 'http://i.imgur.com/ut1lOix.png'},
+        position: 'left',
         date: new Date(2014, 0, 1, 20, 0),
       }, {
-        text: 'React Native enables you to build world-class application experiences on native platforms using a consistent developer experience based on JavaScript and React. https://github.com/facebook/react-native',
-        name: 'React-Native',
-        image: {uri: 'https://facebook.github.io/react/img/logo_og.png'},
-        position: 'left',
-        date: new Date(2013, 0, 1, 12, 0),
+        text: 'How far do you plan on taking this project?',
+        name: 'Curious investor',
+        image: null,
+        position: 'right',
+        date: new Date(2014, 0, 1, 12, 0),
       },
     ];
 
@@ -118,22 +118,6 @@ var Messenger = React.createClass({
     // Your logic here
     // Eg: Re-send the message to your server
 
-    setTimeout(() => {
-      // will set the message to a custom status 'Sent' (you can replace 'Sent' by what you want - it will be displayed under the row)
-      if (this.isMounted()) {
-        this._GiftedMessenger.setMessageStatus('Sent', rowID);
-      }
-      setTimeout(() => {
-        // will set the message to a custom status 'Seen' (you can replace 'Seen' by what you want - it will be displayed under the row)
-        if (this.isMounted()) {
-          this._GiftedMessenger.setMessageStatus('Seen', rowID);
-        }
-        setTimeout(() => {
-          // append an answer
-          this.handleReceive({text: 'I saw your message', name: 'React-Native', image: {uri: 'https://facebook.github.io/react/img/logo_og.png'}, position: 'left', date: new Date()});
-        }, 500);
-      }, 1000);
-    }, 500);
   },
 
   // will be triggered when the Image of a row is touched
@@ -162,7 +146,7 @@ var Messenger = React.createClass({
         loadEarlierMessagesButton={true}
         onLoadEarlierMessages={this.onLoadEarlierMessages.bind(this)}
 
-        senderName='Developer'
+        senderName='1'
         senderImage={null}
         onImagePress={this.onImagePress.bind(this)}
         displayNames={true}
